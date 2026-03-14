@@ -17,7 +17,19 @@ jobs:
         with:
           repository: zeroclaw-labs/zeroclaw
           fetch-depth: 1
+       - name: Setup Node.js
+        if: steps.decision.outputs.build == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
+      - name: Build Web UI
+        if: steps.decision.outputs.build == 'true'
+        run: |
+          cd web           # 进入前端源码目录
+          npm install      # 安装前端依赖
+          npm run build    # 编译前端，生成 web/dist 目录
+          ls -R web/dist   # 确认文件已生成（调试用）
       # 2. 登录到 GitHub 容器注册表
       - name: Log in to GHCR
         uses: docker/login-action@v3
